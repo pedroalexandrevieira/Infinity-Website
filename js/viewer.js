@@ -2,15 +2,17 @@
 const url = './assets/InfinityWebsite.pdf';
 
 // Initialize PDF.js library
-const pdfjsLib = window['./pdfjs/src/pdf.js'];
-pdfjsLib.GlobalWorkerOptions.workerSrc = './pdfjs/src/pdf.worker.js';
+import { getDocument, GlobalWorkerOptions } from './pdfjs/src/pdf.js';
+
+// Set the workerSrc to the path of the PDF worker
+GlobalWorkerOptions.workerSrc = './pdfjs/src/pdf.worker.js';
 
 // Asynchronous function to render the PDF
 async function renderPDF() {
-    const pdfViewer = document.getElementById('./pdfjs/web/pdf_viewer.css');
+    const pdfViewer = document.getElementById('pdf-viewer');
     
     // Load the PDF document
-    const pdfDoc = await pdfjsLib.getDocument(url).promise;
+    const pdfDoc = await getDocument(url).promise;
 
     // Loop through all the pages and render them on canvas
     for (let pageNumber = 1; pageNumber <= pdfDoc.numPages; pageNumber++) {
