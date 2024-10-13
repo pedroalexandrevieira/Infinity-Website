@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View PDF with PDF.js</title>
-    <link rel="stylesheet" href="pdfjs/pdf-viewer.css"> <!-- Optional: Include CSS for styling -->
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.jpeg">
+    <link rel="stylesheet" href="./pdfjs/web/pdf_viewer.css">
     <style>
         /* Full-page PDF container */
         html, body {
@@ -17,6 +18,9 @@
             height: 100%;
             overflow: auto;
             background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         canvas {
             display: block;
@@ -28,11 +32,48 @@
     <!-- PDF container -->
     <div id="pdf-viewer"></div>
 
-    <!-- Include PDF.js library and worker -->
-    <script src="pdfjs/pdf.js"></script>
-    <script src="pdfjs/pdf.worker.js"></script>
+    <!-- Include PDF.js library -->
+    <script type="module">
+        import { getDocument, GlobalWorkerOptions } from './pdfjs/src/pdf.js';
 
-    <!-- Custom JavaScript to render PDF -->
-    <script src="js/viewer.js"></script>
+        // Set workerSrc to the path of the PDF worker
+        GlobalWorkerOptions.workerSrc = './pdfjs/src/pdf.worker.js';
+
+        // URL of the PDF document
+        const url = './assets/InfinityWebsite.pdf';
+
+        // Load the PDF document
+        const loadingTask = getDocument(url);
+        loadingTask.promise.then(pdf => {
+            console.log('PDF loaded');
+
+            // Fetch the first page
+            pdf.getPage(1).then(page => {
+                console.log('Page loaded');
+
+                const scale = 1.5; // Adjust scale as needed
+                const viewport = page.getViewport({ scale: scale });
+
+                // Prepare canvas using PDF page dimensions
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Append the canvas to the PDF viewer div
+                document.getElementById('pdf-viewer').appendChild(canvas);
+
+                // Render PDF page into canvas context
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        }, reason => {
+            // PDF loading error
+            console.error('Error loading PDF:', reason);
+        });
+    </script>
 </body>
 </html>

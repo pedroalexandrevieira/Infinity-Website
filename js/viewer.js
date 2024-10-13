@@ -1,13 +1,13 @@
 // URL to the PDF file
-const url = 'assets/InfinityWebsite.pdf';
+const url = './assets/InfinityWebsite.pdf';
 
 // Initialize PDF.js library
-const pdfjsLib = window['pdfjs-dist/build/pdf'];
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.js';
+const pdfjsLib = window['./pdfjs/src/pdf.js'];
+pdfjsLib.GlobalWorkerOptions.workerSrc = './pdfjs/src/pdf.worker.js';
 
 // Asynchronous function to render the PDF
 async function renderPDF() {
-    const pdfViewer = document.getElementById('pdf-viewer');
+    const pdfViewer = document.getElementById('./pdfjs/web/pdf_viewer.css');
     
     // Load the PDF document
     const pdfDoc = await pdfjsLib.getDocument(url).promise;
