@@ -3,15 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="3; url=https://github.com/pedroalexandrevieira/Infinity-Website/blob/main/assests/InfinityWebsite.pdf" />
-    <title>Redirecting...</title>
+    <title>View PDF</title>
+    <style>
+        /* Ensure the iframe takes up the full page */
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-    <p>If you are not redirected in a few seconds, 
-        <a href="https://github.com/pedroalexandrevieira/Infinity-Website/blob/main/assests/InfinityWebsite.pdf">click here</a> to view the PDF.
-    </p>
-
-    <!-- Link to external JavaScript file -->
-    <script src="redirect.js"></script>
+    <!-- Embed the PDF in an iframe to display it in full-page view -->
+    <iframe src="https://github.com/pedroalexandrevieira/Infinity-Website/blob/main/assets/InfinityWebsite.pdf"></iframe>
 </body>
 </html>
