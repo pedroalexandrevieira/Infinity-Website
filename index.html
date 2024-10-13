@@ -3,24 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View PDF</title>
+    <title>View PDF with PDF.js</title>
+    <link rel="stylesheet" href="pdfjs/pdf-viewer.css"> <!-- Optional: Include CSS for styling -->
     <style>
-        /* Ensure the iframe takes up the full page */
+        /* Full-page PDF container */
         html, body {
             margin: 0;
             height: 100%;
             overflow: hidden;
         }
-
-        iframe {
+        #pdf-viewer {
             width: 100%;
             height: 100%;
-            border: none;
+            overflow: auto;
+            background: #eee;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
-    <!-- Embed the PDF in an iframe to display it in full-page view -->
-    <iframe src="https://github.com/pedroalexandrevieira/Infinity-Website/blob/main/assets/InfinityWebsite.pdf"></iframe>
+    <!-- PDF container -->
+    <div id="pdf-viewer"></div>
+
+    <!-- Include PDF.js library and worker -->
+    <script src="pdfjs/pdf.js"></script>
+    <script src="pdfjs/pdf.worker.js"></script>
+
+    <!-- Custom JavaScript to render PDF -->
+    <script src="js/viewer.js"></script>
 </body>
 </html>
