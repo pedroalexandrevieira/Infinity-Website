@@ -3,24 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Website</title>
+  <title>Interactive PDF Viewer</title>
   <style>
-    /* Remove margins and ensure the content takes the full window */
+    /* Fullscreen and scrolling layout */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
+      background-color: #000;
+      overflow-y: auto;
     }
-    iframe {
+
+    #pdf-container {
       width: 100%;
-      height: 100%;
-      border: none; /* Remove iframe border */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pdf-page {
+      position: relative;
+      display: block;
+      margin: 0;
+      background: transparent;
+    }
+
+    .annotation-link {
+      position: absolute;
+      border: none;
+      background: transparent;
+      pointer-events: auto;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
-  <!-- Embed the PDF but hide its true nature -->
-  <iframe src="assets/InfinityWebsite.pdf" title="Content"></iframe>
+  <div id="pdf-container"></div>
+
+  <script type="module">
+    import * as pdfjsLib from './assets/pdfjs/build/pdf.mjs';
+
+    // Set worker source
+    pdfjsLib.GlobalWorkerOptions.workerSrc = './assets/pdfjs/build/pdf.worker.mjs';
+
+    const pdfPath = 'assets/InfinityWebsite.pdf'; // Path to your PDF
+    const container = document.getElementById('pdf-container');
+
+    pdfjsLib.getDocument(pdfPath).promise.then(pdf => {
+      console.log('PDF loaded');
+
+      // Function to render each page with annotations
+      const renderPage = (pageNumber) => {
+        pdf.getPage(pageNumber).then(page => {
+          const scale = window.innerWidth / page.view[2]; // Scale to fit screen width
+          const viewport = page.getViewport({ scale });
+
+          // Create page container
+          const pageContainer = document.createElement('div');
+          pageContainer.className = 'pdf-page';
+          pageContainer.style.width = `${viewport.width}px`;
+          pageContainer.style.height = `${viewport.height}px`;
+
+          // Render canvas
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          pageContainer.appendChild(canvas);
+          container.appendChild(pageContainer);
+
+          page.render({ canvasContext: context, viewport });
+
+          // Fetch and render annotations (links)
+          page.getAnnotations().then(annotations => {
+            annotations.forEach(annotation => {
+              if (annotation.subtype === 'Link' && annotation.url) {
+                // Create a clickable link
+                const link = document.createElement('a');
+                link.href = annotation.url;
+                link.target = '_blank';
+                link.className = 'annotation-link';
+
+                // Position and size the link
+                const rect = pdfjsLib.Util.normalizeRect(annotation.rect);
+                const x = rect[0] * scale;
+                const y = (page.view[3] - rect[1]) * scale; // Invert y-coordinate
+                const width = (rect[2] - rect[0]) * scale;
+                const height = (rect[1] - rect[3]) * scale;
+
+                link.style.left = `${x}px`;
+                link.style.top = `${y}px`;
+                link.style.width = `${width}px`;
+                link.style.height = `${height}px`;
+
+                // Append the link to the page container
+                pageContainer.appendChild(link);
+              }
+            });
+          });
+        });
+      };
+
+      // Render all pages
+      for (let i = 1; i <= pdf.numPages; i++) {
+        renderPage(i);
+      }
+    }).catch(error => {
+      console.error('Error loading PDF:', error);
+    });
+  </script>
 </body>
 </html>
