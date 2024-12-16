@@ -1,79 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View PDF with PDF.js</title>
-    <link rel="icon" type="image/x-icon" href="./assets/favicon.jpeg">
-    <link rel="stylesheet" href="./pdfjs/web/pdf_viewer.css">
-    <style>
-        /* Full-page PDF container */
-        html, body {
-            margin: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-        #pdf-viewer {
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        canvas {
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Website</title>
+  <style>
+    /* Remove margins and ensure the content takes the full window */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none; /* Remove iframe border */
+    }
+  </style>
 </head>
 <body>
-    <!-- PDF container -->
-    <div id="pdf-viewer"></div>
-
-    <!-- Include PDF.js library -->
-    <script type="module">
-        import { getDocument, GlobalWorkerOptions } from './pdfjs/src/pdf.js';
-
-        // Set workerSrc to the path of the PDF worker
-        GlobalWorkerOptions.workerSrc = './pdfjs/src/pdf.worker.js';
-
-        // URL of the PDF document
-        const url = './assets/InfinityWebsite.pdf';
-
-        // Load the PDF document
-        const loadingTask = getDocument(url);
-        loadingTask.promise.then(pdf => {
-            console.log('PDF loaded');
-
-            // Fetch the first page
-            pdf.getPage(1).then(page => {
-                console.log('Page loaded');
-
-                const scale = 1.5; // Adjust scale as needed
-                const viewport = page.getViewport({ scale: scale });
-
-                // Prepare canvas using PDF page dimensions
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                // Append the canvas to the PDF viewer div
-                document.getElementById('pdf-viewer').appendChild(canvas);
-
-                // Render PDF page into canvas context
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                page.render(renderContext);
-            });
-        }, reason => {
-            // PDF loading error
-            console.error('Error loading PDF:', reason);
-        });
-    </script>
+  <!-- Embed the PDF but hide its true nature -->
+  <iframe src="assets/InfinityWebsite.pdf" title="Content"></iframe>
 </body>
 </html>
